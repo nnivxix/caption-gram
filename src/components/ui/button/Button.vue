@@ -3,6 +3,7 @@ import type { HTMLAttributes } from "vue";
 import { cn } from "@/lib/utils";
 import { Primitive, type PrimitiveProps } from "reka-ui";
 import { type ButtonVariants, buttonVariants } from ".";
+import { LoaderCircle } from "lucide-vue-next";
 
 interface Props extends PrimitiveProps {
   variant?: ButtonVariants["variant"];
@@ -25,6 +26,7 @@ const props = withDefaults(defineProps<Props>(), {
     :disabled="isLoading"
     :class="cn(buttonVariants({ variant, size }), props.class)"
   >
+    <LoaderCircle v-if="isLoading" class="animate-spin" />
     <slot />
   </Primitive>
 </template>

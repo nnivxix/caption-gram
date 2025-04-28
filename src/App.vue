@@ -4,7 +4,10 @@ import { Input } from "./components/ui/input";
 import { ofetch } from "ofetch";
 import { ref } from "vue";
 import * as cheerio from "cheerio";
+import { useClipboard } from "@vueuse/core";
 
+const content = ref("");
+const { copy, copied } = useClipboard();
 const isLoading = ref(false);
 const form = ref({
   link: "https://www.instagram.com/reel/DITiF7nSzHj/?igsh=MXN1dWt5amFqc2UwdQ==",
@@ -20,9 +23,7 @@ const submit = async () => {
     const $ = cheerio.load(response);
     const metaTagContent = $('meta[name="description"]').attr("content");
     if (metaTagContent) {
-      console.log("Meta Tag Content:", metaTagContent);
-    } else {
-      console.log("Meta tag with description not found");
+      content.value = metaTagContent;
     }
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -43,5 +44,14 @@ const submit = async () => {
         <Button :isLoading class="w-full">Submit</Button>
       </div>
     </form>
+    <div
+      v-if="content"
+      class="bg-muted rounded-2xl py-6 relative whitespace-pre-line mx-auto px-4 max-w-2xl"
+    >
+      <Button class="absolute top-4 right-4" @click="copy(content)">
+        {{ copied ? "Copied!" : "Copy" }}
+      </Button>
+      {{ content }}
+    </div>
   </div>
 </template>
