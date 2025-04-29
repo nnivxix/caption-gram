@@ -13,10 +13,10 @@ export default defineConfig({
 
   server: {
     proxy: {
-      "/api": {
+      "/api/ig-caption": {
         target: "https://www.instagram.com",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ""),
+        rewrite: (path) => path.replace(/^\/api\/ig-caption/, ""),
       },
     },
   },

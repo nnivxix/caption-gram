@@ -15,7 +15,10 @@ const form = ref({
 const submit = async () => {
   isLoading.value = true;
   try {
-    const link = form.value.link.replace("https://www.instagram.com/", "/api/");
+    const link = form.value.link.replace(
+      "https://www.instagram.com/",
+      "/api/ig-caption/"
+    );
     const response = await ofetch(link, {
       responseType: "text",
     });
@@ -38,9 +41,9 @@ const submit = async () => {
       @submit.prevent="submit"
       class="grid grid-cols-8 my-4 px-4 mx-auto max-w-2xl gap-4"
     >
-      <Input v-model="form.link" class="lg:col-span-7 col-span-full" />
+      <Input v-model="form.link" class="lg:col-span-6 col-span-full" />
 
-      <div class="lg:col-span-1 col-span-full">
+      <div class="lg:col-span-2 col-span-full">
         <Button :isLoading class="w-full">Submit</Button>
       </div>
     </form>
