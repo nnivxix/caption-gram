@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import Form from "./components/Form.vue";
 import Footer from "./components/Footer.vue";
+import Header from "./components/Header.vue";
 import Content from "./components/Content.vue";
 import { Toaster } from "./components/ui/sonner";
 
@@ -11,7 +12,8 @@ const updateContent = (value: string) => {
 };
 </script>
 <template>
-  <div class="flex flex-col min-h-[95vh]">
+  <div class="flex flex-col min-h-[95vh] px-4">
+    <Header />
     <Form @update:content="updateContent" />
     <Content :value="content" />
     <Footer />

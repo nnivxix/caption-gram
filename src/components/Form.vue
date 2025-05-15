@@ -12,7 +12,7 @@ const emit = defineEmits<{
 
 const isLoading = ref(false);
 const form = ref({
-  link: "https://www.instagram.com/reel/DITiF7nSzHj/?igsh=MXN1dWt5amFqc2UwdQ==",
+  link: "",
 });
 const submit = async () => {
   isLoading.value = true;
@@ -51,12 +51,18 @@ const submit = async () => {
 <template>
   <form
     @submit.prevent="submit"
-    class="grid grid-cols-8 my-4 px-4 mx-auto max-w-2xl w-full gap-4"
+    class="grid grid-cols-8 my-4 mx-auto max-w-2xl w-full gap-x-4 gap-y-2"
   >
-    <Input v-model="form.link" class="lg:col-span-6 col-span-full" />
+    <label for="link" class="col-span-full">Enter Instagram Url</label>
+    <Input
+      id="link"
+      v-model="form.link"
+      placeholder="https://www.instagram.com/xxxx"
+      class="lg:col-span-6 col-span-full"
+    />
 
     <div class="lg:col-span-2 col-span-full">
-      <Button :isLoading class="w-full">Submit</Button>
+      <Button variant="brand" :isLoading class="w-full">Submit</Button>
     </div>
   </form>
 </template>
