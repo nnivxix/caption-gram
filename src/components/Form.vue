@@ -4,6 +4,7 @@ import { Input } from "./ui/input";
 import { ofetch } from "ofetch";
 import { ref } from "vue";
 import * as cheerio from "cheerio";
+import { toast } from "vue-sonner";
 
 const emit = defineEmits<{
   "update:content": [value: string];
@@ -16,6 +17,12 @@ const form = ref({
 const submit = async () => {
   isLoading.value = true;
   try {
+    if (!form.value.link) {
+      throw new Error("Please enter a link");
+    }
+    if (!form.value.link.includes("instagram.com")) {
+      throw new Error("Please enter a valid Instagram link");
+    }
     const link = form.value.link.replace(
       "https://www.instagram.com/",
       "/api/ig-caption/"
@@ -26,11 +33,16 @@ const submit = async () => {
 
     const $ = cheerio.load(response);
     const metaTagContent = $('meta[name="description"]').attr("content");
-    if (metaTagContent) {
-      emit("update:content", metaTagContent);
+    if (!metaTagContent) {
+      throw new Error("Meta tag content not found");
     }
+    emit("update:content", metaTagContent);
   } catch (error) {
-    console.error("Error fetching data:", error);
+    if (error instanceof Error) {
+      toast.error(error.message);
+    } else {
+      toast.error("An unknown error occurred");
+    }
   } finally {
     isLoading.value = false;
   }
