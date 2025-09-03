@@ -90,10 +90,7 @@ export default defineNuxtConfig({
 
   modules: ["shadcn-nuxt"],
 
-  shadcn: {
-    prefix: "",
-    componentDir: "./app/components/ui",
-  },
+  devtools: { enabled: true },
 
   css: ["~/assets/css/style.css"],
 
@@ -108,6 +105,11 @@ export default defineNuxtConfig({
         },
       },
     },
+  },
+
+  shadcn: {
+    prefix: "",
+    componentDir: "./app/components/ui",
   },
 
   compatibilityDate: "2025-09-03",
