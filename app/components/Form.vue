@@ -8,10 +8,13 @@ const emit = defineEmits<{
 const postId = ref("");
 const isLoading = ref(false);
 const url = ref("");
+
 const submit = async () => {
   isLoading.value = true;
+
   try {
     await validateUrl(url.value);
+
     const response = await $fetch<{
       caption: string;
     }>("/api/ig", {
