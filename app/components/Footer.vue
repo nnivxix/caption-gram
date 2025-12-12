@@ -3,7 +3,7 @@
     <div
       class="text-center text-sm py-4 md:mx-0 space-y-2 rounded-2xl bg-muted text-muted-foreground"
     >
-      <p>HeadScout - 2025</p>
+      <p>Caption Gram - 2025</p>
       <p>
         Made by
         <a href="https://x.com/nnivxix" target="_blank" class="underline"

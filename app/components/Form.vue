@@ -28,7 +28,7 @@ const submit = async () => {
       method: "POST",
       body: { url: link },
     });
-    emit("update:content", response.caption);
+    emit("update:content", response.data);
   } catch (error) {
     if (error instanceof Error) {
       toast.error(error.message);
