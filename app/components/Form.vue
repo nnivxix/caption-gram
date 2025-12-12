@@ -8,6 +8,8 @@ const emit = defineEmits<{
   "update:content": [value: string];
 }>();
 
+const instagramPostId = ref("");
+
 const isLoading = ref(false);
 const form = ref({
   link: "",
@@ -18,10 +20,14 @@ const submit = async () => {
     if (!form.value.link) {
       throw new Error("Please enter a link");
     }
-    // if (!form.value.link.includes("instagram.com")) {
-    //   throw new Error("Please enter a valid Instagram link");
-    // }
     const link = form.value.link;
+    const postId = link.split("/p/")[1]?.split("/")[0];
+
+    if (postId === instagramPostId.value) {
+      return toast.error("You have already submitted this link");
+    }
+    instagramPostId.value = postId;
+
     const response = await $fetch<{
       caption: string;
     }>("/api/ig", {
