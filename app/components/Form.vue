@@ -79,13 +79,8 @@ const extractPostId = (url: string): string | null => {
     @submit.prevent="submit"
     class="grid grid-cols-8 my-4 mx-auto max-w-2xl w-full gap-x-4 gap-y-2"
   >
-    <label for="link" class="col-span-full">Enter Instagram Url</label>
-    <Input
-      id="link"
-      v-model="form.link"
-      placeholder="https://www.instagram.com/xxxx"
-      class="lg:col-span-6 col-span-full"
-    />
+    <label for="url" class="col-span-full">Enter Instagram & YouTube Url</label>
+    <Input id="url" v-model="url" class="lg:col-span-6 col-span-full" />
 
     <div class="lg:col-span-2 col-span-full">
       <Button variant="brand" :isLoading class="w-full">Submit</Button>
