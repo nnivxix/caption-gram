@@ -1,6 +1,6 @@
 {
     "functions": {
-        "api/**/*.ts": {
+        ".output/server/**/*.mjs": {
             "maxDuration": 30,
             "memory": 1024
         }
