@@ -1,40 +1,24 @@
 <script setup lang="ts">
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { ref } from "vue";
 import { toast } from "vue-sonner";
 
 const emit = defineEmits<{
   "update:content": [value: string];
 }>();
 
-const instagramPostId = ref("");
-
+const postId = ref("");
 const isLoading = ref(false);
-const form = ref({
-  link: "",
-});
+const url = ref("");
 const submit = async () => {
   isLoading.value = true;
   try {
-    if (!form.value.link) {
-      throw new Error("Please enter a link");
-    }
-    const link = form.value.link;
-    const postId = link.split("/p/")[1]?.split("/")[0];
-
-    if (postId === instagramPostId.value) {
-      return toast.error("You have already submitted this link");
-    }
-    instagramPostId.value = postId;
-
+    await validateUrl(url.value);
     const response = await $fetch<{
       caption: string;
     }>("/api/ig", {
       method: "POST",
-      body: { url: link },
+      body: { url: url.value },
     });
-    emit("update:content", response.data);
+    emit("update:content", response.data.caption);
   } catch (error) {
     if (error instanceof Error) {
       toast.error(error.message);
@@ -44,6 +28,50 @@ const submit = async () => {
   } finally {
     isLoading.value = false;
   }
+};
+
+const validateUrl = (url: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    if (!url) {
+      reject(new Error("URL is required"));
+      return;
+    }
+
+    const extractedId = extractPostId(url);
+
+    if (extractedId === postId.value) {
+      reject(new Error("You have submit this link"));
+      return;
+    }
+
+    if (!extractedId) {
+      reject(new Error("Invalid URL format"));
+      return;
+    }
+
+    postId.value = extractedId;
+    resolve(extractedId);
+  });
+};
+
+const extractPostId = (url: string): string | null => {
+  // Instagram: /p/{post_id}/ or /reel/{post_id}/
+  const igMatch = url.match(/instagram\.com\/(p|reel)\/([A-Za-z0-9_-]+)/);
+  if (igMatch) return igMatch[2];
+
+  // YouTube shorts: /shorts/{video_id}
+  const ytShortsMatch = url.match(/youtube\.com\/shorts\/([A-Za-z0-9_-]+)/);
+  if (ytShortsMatch) return ytShortsMatch[1];
+
+  // YouTube watch: ?v={video_id}
+  const ytWatchMatch = url.match(/[?&]v=([A-Za-z0-9_-]+)/);
+  if (ytWatchMatch) return ytWatchMatch[1];
+
+  // YouTube short link: youtu.be/{video_id}
+  const ytShortMatch = url.match(/youtu\.be\/([A-Za-z0-9_-]+)/);
+  if (ytShortMatch) return ytShortMatch[1];
+
+  return null;
 };
 </script>
 <template>
