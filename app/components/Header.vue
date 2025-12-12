@@ -1,0 +1,10 @@
+<template>
+  <header>
+    <div class="max-w-2xl mx-auto py-2">
+      <h1 class="text-lg text-brand font-bold">Caption Gram</h1>
+      <p class="text-muted-foreground text-sm">
+        Instagram & YouTube Caption Extractor
+      </p>
+    </div>
+  </header>
+</template>

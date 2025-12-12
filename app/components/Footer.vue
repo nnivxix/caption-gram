@@ -3,10 +3,13 @@
     <div
       class="text-center text-sm py-4 md:mx-0 space-y-2 rounded-2xl bg-muted text-muted-foreground"
     >
-      <p>HeadScout - 2025</p>
+      <p>Caption Gram - {{ new Date().getFullYear() }}</p>
       <p>
         Made by
-        <a href="https://x.com/nnivxix" target="_blank" class="underline"
+        <a
+          href="https://www.hanasa.id?utm_source=caption-gram&utm_medium=footer"
+          target="_blank"
+          class="underline"
           >Hanasa</a
         >
       </p>
