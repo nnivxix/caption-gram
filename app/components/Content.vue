@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineModel } from "vue";
 import { Button } from "./ui/button";
 import { useClipboard } from "@vueuse/core";
 

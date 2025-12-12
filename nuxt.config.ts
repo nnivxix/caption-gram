@@ -3,7 +3,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
   app: {
     head: {
-      title: "HeadScout",
+      title: "Caption Gram",
       meta: [
         { charset: "UTF-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1.0" },
