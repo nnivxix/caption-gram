@@ -96,15 +96,6 @@ export default defineNuxtConfig({
 
   vite: {
     plugins: [tailwindcss()],
-    server: {
-      proxy: {
-        "/api/ig-caption": {
-          target: "https://www.instagram.com",
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api\/ig-caption/, ""),
-        },
-      },
-    },
   },
 
   shadcn: {
@@ -112,5 +103,5 @@ export default defineNuxtConfig({
     componentDir: "./app/components/ui",
   },
 
-  compatibilityDate: "2025-09-03",
+  compatibilityDate: "2025-12-12",
 });
