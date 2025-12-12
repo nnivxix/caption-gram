@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { ofetch } from "ofetch";
 import { ref } from "vue";
-import * as cheerio from "cheerio";
 import { toast } from "vue-sonner";
 
 const emit = defineEmits<{
@@ -20,23 +18,17 @@ const submit = async () => {
     if (!form.value.link) {
       throw new Error("Please enter a link");
     }
-    if (!form.value.link.includes("instagram.com")) {
-      throw new Error("Please enter a valid Instagram link");
-    }
-    const link = form.value.link.replace(
-      "https://www.instagram.com/",
-      "/api/ig-caption/"
-    );
-    const response = await ofetch(link, {
-      responseType: "text",
+    // if (!form.value.link.includes("instagram.com")) {
+    //   throw new Error("Please enter a valid Instagram link");
+    // }
+    const link = form.value.link;
+    const response = await $fetch<{
+      caption: string;
+    }>("/api/ig", {
+      method: "POST",
+      body: { url: link },
     });
-
-    const $ = cheerio.load(response);
-    const metaTagContent = $('meta[name="description"]').attr("content");
-    if (!metaTagContent) {
-      throw new Error("Meta tag content not found");
-    }
-    emit("update:content", metaTagContent);
+    emit("update:content", response.caption);
   } catch (error) {
     if (error instanceof Error) {
       toast.error(error.message);

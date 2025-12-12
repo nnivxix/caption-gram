@@ -11,6 +11,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@sparticuz/chromium": "^143.0.0",
     "@tailwindcss/vite": "^4.1.4",
     "@vueuse/core": "^13.1.0",
     "cheerio": "^1.0.0",
@@ -19,6 +20,7 @@
     "lucide-vue-next": "^0.503.0",
     "nuxt": "^4.1.0",
     "ofetch": "^1.4.1",
+    "puppeteer-core": "^24.33.0",
     "reka-ui": "^2.2.0",
     "shadcn-nuxt": "^2.2.0",
     "tailwind-merge": "^3.2.0",
@@ -29,7 +31,6 @@
   },
   "devDependencies": {
     "@types/node": "^22.15.3",
-    "@vitejs/plugin-vue": "^5.2.2",
     "@vue/tsconfig": "^0.7.0",
     "typescript": "~5.7.2",
     "vite": "^6.3.1",
