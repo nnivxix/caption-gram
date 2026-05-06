@@ -10,7 +10,7 @@ const { copy, copied } = useClipboard();
   <div class="flex-1">
     <div
       v-if="value"
-      class="bg-muted rounded-2xl py-6 relative whitespace-pre-line mx-auto px-4 max-w-2xl"
+      class="bg-muted rounded-2xl pb-6 pt-14 relative whitespace-pre-line mx-auto px-4 max-w-2xl"
     >
       <Button class="absolute top-4 right-4" @click="copy(value)">
         {{ copied ? "Copied!" : "Copy" }}

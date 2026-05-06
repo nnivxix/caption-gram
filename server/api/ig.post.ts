@@ -28,11 +28,15 @@ function normalizeUrl(url: string): string {
 function validateUrl(url: string): void {
   const isInstagram = url.includes("instagram.com");
   const isYoutube = url.includes("youtube.com") || url.includes("youtu.be");
+  const isFacebook =
+    url.includes("facebook.com") ||
+    url.includes("fb.watch") ||
+    url.includes("fb.com");
 
-  if (!isInstagram && !isYoutube) {
+  if (!isInstagram && !isYoutube && !isFacebook) {
     throw createError({
       statusCode: 400,
-      message: "URL must be an Instagram or YouTube link",
+      message: "URL must be an Instagram, YouTube, or Facebook link",
     });
   }
 }
@@ -56,7 +60,7 @@ async function scrapePost(url: string): Promise<string> {
     const page = await browser.newPage();
 
     await page.setUserAgent(
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     );
 
     await page.goto(url, {
