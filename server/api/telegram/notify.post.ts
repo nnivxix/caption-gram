@@ -26,10 +26,10 @@ export default defineEventHandler(async (event) => {
   const message = `
 🎯 *Caption Extracted!*
 
-${caption}
+${escapeMarkdown(caption)}
 
-🔗 *URL:* ${url}
-⏰ *Time:* ${timestamp}
+🔗 [View Post](${url})
+⏰ Time: ${timestamp}
   `.trim();
 
   try {
@@ -55,3 +55,8 @@ ${caption}
     });
   }
 });
+
+function escapeMarkdown(text: string): string {
+  // Escape special characters for Telegram Markdown
+  return text.replace(/[_*()~`>#+=|{}]/g, "\\$&");
+}
