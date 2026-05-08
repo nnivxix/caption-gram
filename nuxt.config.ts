@@ -98,6 +98,10 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
 
+  runtimeConfig: {
+    telegramBotToken: process.env.TELEGRAM_BOT_TOKEN || "",
+  },
+
   shadcn: {
     prefix: "",
     componentDir: "./app/components/ui",
