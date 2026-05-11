@@ -46,12 +46,33 @@ function normalizeUrl(url: string): string {
 }
 
 function validateUrl(url: string): void {
-  const isInstagram = url.includes("instagram.com");
-  const isYoutube = url.includes("youtube.com") || url.includes("youtu.be");
-  const isFacebook =
-    url.includes("facebook.com") ||
-    url.includes("fb.watch") ||
-    url.includes("fb.com");
+  let parsedUrl: URL;
+
+  try {
+    parsedUrl = new URL(url);
+  } catch {
+    throw createError({
+      statusCode: 400,
+      message: "URL must be a valid absolute URL",
+    });
+  }
+
+  if (parsedUrl.protocol !== "https:" && parsedUrl.protocol !== "http:") {
+    throw createError({
+      statusCode: 400,
+      message: "URL must use http or https",
+    });
+  }
+
+  const hostname = parsedUrl.hostname.toLowerCase();
+
+  const isInstagram = isAllowedHostname(hostname, ["instagram.com"]);
+  const isYoutube = isAllowedHostname(hostname, ["youtube.com", "youtu.be"]);
+  const isFacebook = isAllowedHostname(hostname, [
+    "facebook.com",
+    "fb.watch",
+    "fb.com",
+  ]);
 
   if (!isInstagram && !isYoutube && !isFacebook) {
     throw createError({
@@ -59,6 +80,13 @@ function validateUrl(url: string): void {
       message: "URL must be an Instagram, YouTube, or Facebook link",
     });
   }
+}
+
+function isAllowedHostname(hostname: string, allowedHosts: string[]): boolean {
+  return allowedHosts.some(
+    (allowedHost) =>
+      hostname === allowedHost || hostname.endsWith(`.${allowedHost}`),
+  );
 }
 
 async function scrapePost(url: string): Promise<string> {
