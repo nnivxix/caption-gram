@@ -1,6 +1,6 @@
 export default defineEventHandler(async (event) => {
   const { chatId } = await readBody(event);
-  const config = useRuntimeConfig();
+  const config = useRuntimeConfig(event);
   const token = config.telegramBotToken;
 
   if (!token) {
@@ -44,9 +44,7 @@ You will now receive caption notifications here.
     console.error("Telegram validation error:", error);
     throw createError({
       statusCode: 400,
-      message:
-        error?.data?.description ||
-        "Invalid Chat ID. Please check and try again.",
+      message: "Invalid Chat ID. Please check and try again.",
     });
   }
 });
