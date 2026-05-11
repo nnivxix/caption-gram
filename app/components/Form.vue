@@ -1,78 +1,59 @@
 <script setup lang="ts">
 import { toast } from "vue-sonner";
+import { useStorage } from "@vueuse/core";
+import { useSubmit } from "~/composables/useSubmit";
 
 const emit = defineEmits<{
   "update:content": [value: string];
 }>();
 
-const postId = ref("");
-const isLoading = ref(false);
 const url = ref("");
+const chatId = useStorage("telegram-chat-id", "");
 
-const submit = async () => {
-  isLoading.value = true;
-
-  try {
-    await validateUrl(url.value);
-
-    const response = await $fetch<{
-      data: {
-        caption: string;
-      };
-    }>("/api/ig", {
+const { submit, isLoading } = useSubmit(
+  () =>
+    $fetch("/api/ig/", {
       method: "POST",
-      body: { url: url.value },
-    });
-    emit("update:content", response.data.caption);
-  } catch (error) {
-    if (error instanceof Error) {
-      toast.error(error.message);
-    } else {
-      toast.error("An unknown error occurred");
-    }
-  } finally {
-    isLoading.value = false;
-  }
-};
-
-const validateUrl = (url: string): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    if (!url) {
-      reject(new Error("URL is required"));
-      return;
-    }
-
-    // const extractedId = extractPostId(url);
-
-    // if (extractedId === postId.value) {
-    //   reject(new Error("You have submit this link"));
-    //   return;
-    // }
-
-    // if (!extractedId) {
-    //   reject(new Error("Invalid URL format"));
-    //   return;
-    // }
-
-    // postId.value = extractedId;
-    resolve(url);
-  });
-};
+      body: JSON.stringify({ url: url.value, chatId: chatId.value }),
+    }),
+  {
+    onError(error) {
+      toast.error(error.message || "An error occurred while fetching captions");
+    },
+    onSuccess(data) {
+      emit("update:content", data.captions);
+      toast.success("Captions fetched successfully!");
+      url.value = "";
+    },
+  },
+);
 </script>
 <template>
-  <form
-    @submit.prevent="submit"
-    class="grid grid-cols-8 my-4 mx-auto max-w-2xl w-full gap-x-4 gap-y-2"
-  >
+  <form @submit.prevent="submit" class="grid grid-cols-8 gap-x-4 gap-y-3">
     <label for="url" class="col-span-full"
       >Enter Instagram, YouTube, or Facebook URL</label
     >
-    <Input id="url" v-model="url" class="lg:col-span-6 col-span-full" />
+    <Input
+      id="url"
+      required
+      v-model="url"
+      class="lg:col-span-6 col-span-full"
+    />
 
     <div class="lg:col-span-2 col-span-full">
       <Button variant="brand" :isLoading="isLoading" class="w-full"
         >Submit</Button
       >
     </div>
+
+    <p class="col-span-full border-t py-2 text-sm text-muted-foreground">
+      <strong>New feature:</strong> You can now receive captions directly in
+      Telegram! Just enter your Telegram Chat ID below, and we'll send the
+      captions straight to your Telegram account. Set it up in the
+      <NuxtLink to="/settings/telegram-bot" class="text-blue-500 underline"
+        >Telegram Bot Settings</NuxtLink
+      >
+      page.
+    </p>
   </form>
 </template>

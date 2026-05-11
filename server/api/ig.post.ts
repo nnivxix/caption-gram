@@ -2,8 +2,9 @@ import puppeteer from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody<{ url: string }>(event);
+  const body = await readBody<{ url: string; chatId?: string }>(event);
 
+  let telegramSent = true;
   // Validate and normalize URL
   const url = normalizeUrl(body.url);
   validateUrl(url);
@@ -11,9 +12,28 @@ export default defineEventHandler(async (event) => {
   // Scrape the post
   const caption = await scrapePost(url);
 
+  // Send to Telegram if chatId is provided
+  if (body.chatId) {
+    try {
+      await $fetch("/api/telegram/notify", {
+        method: "POST",
+        body: {
+          chatId: body.chatId,
+          caption,
+          url,
+        },
+      });
+    } catch (error) {
+      console.error("Failed to send Telegram notification:", error);
+      // Don't throw error - we still want to return the caption
+      // Telegram notification is optional
+      telegramSent = false;
+    }
+  }
+
   return {
     success: true,
-    data: { caption },
+    data: { caption, telegramSent },
   };
 });
 
