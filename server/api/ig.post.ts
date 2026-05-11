@@ -2,8 +2,9 @@ import puppeteer from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody<{ url: string }>(event);
+  const body = await readBody<{ url: string; chatId?: string }>(event);
 
+  let telegramSent = true;
   // Validate and normalize URL
   const url = normalizeUrl(body.url);
   validateUrl(url);
@@ -11,9 +12,28 @@ export default defineEventHandler(async (event) => {
   // Scrape the post
   const caption = await scrapePost(url);
 
+  // Send to Telegram if chatId is provided
+  if (body.chatId) {
+    try {
+      await $fetch("/api/telegram/notify", {
+        method: "POST",
+        body: {
+          chatId: body.chatId,
+          caption,
+          url,
+        },
+      });
+    } catch (error) {
+      console.error("Failed to send Telegram notification:", error);
+      // Don't throw error - we still want to return the caption
+      // Telegram notification is optional
+      telegramSent = false;
+    }
+  }
+
   return {
     success: true,
-    data: { caption },
+    data: { caption, telegramSent },
   };
 });
 
@@ -26,12 +46,33 @@ function normalizeUrl(url: string): string {
 }
 
 function validateUrl(url: string): void {
-  const isInstagram = url.includes("instagram.com");
-  const isYoutube = url.includes("youtube.com") || url.includes("youtu.be");
-  const isFacebook =
-    url.includes("facebook.com") ||
-    url.includes("fb.watch") ||
-    url.includes("fb.com");
+  let parsedUrl: URL;
+
+  try {
+    parsedUrl = new URL(url);
+  } catch {
+    throw createError({
+      statusCode: 400,
+      message: "URL must be a valid absolute URL",
+    });
+  }
+
+  if (parsedUrl.protocol !== "https:" && parsedUrl.protocol !== "http:") {
+    throw createError({
+      statusCode: 400,
+      message: "URL must use http or https",
+    });
+  }
+
+  const hostname = parsedUrl.hostname.toLowerCase();
+
+  const isInstagram = isAllowedHostname(hostname, ["instagram.com"]);
+  const isYoutube = isAllowedHostname(hostname, ["youtube.com", "youtu.be"]);
+  const isFacebook = isAllowedHostname(hostname, [
+    "facebook.com",
+    "fb.watch",
+    "fb.com",
+  ]);
 
   if (!isInstagram && !isYoutube && !isFacebook) {
     throw createError({
@@ -39,6 +80,13 @@ function validateUrl(url: string): void {
       message: "URL must be an Instagram, YouTube, or Facebook link",
     });
   }
+}
+
+function isAllowedHostname(hostname: string, allowedHosts: string[]): boolean {
+  return allowedHosts.some(
+    (allowedHost) =>
+      hostname === allowedHost || hostname.endsWith(`.${allowedHost}`),
+  );
 }
 
 async function scrapePost(url: string): Promise<string> {

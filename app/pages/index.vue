@@ -5,6 +5,8 @@ const updateContent = (value: string) => {
 };
 </script>
 <template>
-  <Form @update:content="updateContent" />
+  <ClientOnly>
+    <Form @update:content="updateContent" />
+  </ClientOnly>
   <Content :value="content" />
 </template>
