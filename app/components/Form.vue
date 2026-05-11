@@ -7,12 +7,20 @@ const emit = defineEmits<{
   "update:content": [value: string];
 }>();
 
+type IgResponse = {
+  success: boolean;
+  data: {
+    caption: string;
+    telegramSent: boolean;
+  };
+};
+
 const url = ref("");
 const chatId = useStorage("telegram-chat-id", "");
 
 const { submit, isLoading } = useSubmit(
   () =>
-    $fetch("/api/ig/", {
+    $fetch<IgResponse>("/api/ig/", {
       method: "POST",
       body: JSON.stringify({ url: url.value, chatId: chatId.value }),
     }),
@@ -21,7 +29,7 @@ const { submit, isLoading } = useSubmit(
       toast.error(error.message || "An error occurred while fetching captions");
     },
     onSuccess(data) {
-      emit("update:content", data.captions);
+      emit("update:content", data.data.caption);
       toast.success("Captions fetched successfully!");
       url.value = "";
     },
