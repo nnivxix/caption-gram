@@ -93,14 +93,14 @@ async function scrapePost(url: string): Promise<string> {
   let browser;
 
   try {
-    const isDev = process.dev || process.env.NODE_ENV === "development";
+    const isDev = import.meta.dev || process.env.NODE_ENV === "development";
 
     browser = await puppeteer.launch({
       args: isDev
         ? ["--no-sandbox", "--disable-setuid-sandbox"]
         : chromium.args,
       executablePath: isDev
-        ? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+        ? process.env.CHROME_EXECUTABLE_PATH
         : await chromium.executablePath(),
       headless: true,
     });
