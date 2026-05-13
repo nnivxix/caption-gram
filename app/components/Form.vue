@@ -17,10 +17,13 @@ type IgResponse = {
 
 const url = ref("");
 const chatId = useStorage("telegram-chat-id", "");
+const {
+  public: { captionApiUrl },
+} = useRuntimeConfig();
 
 const { submit, isLoading } = useSubmit(
   () =>
-    $fetch<IgResponse>("/api/ig/", {
+    $fetch<IgResponse>(`${captionApiUrl}/api/ig`, {
       method: "POST",
       body: JSON.stringify({ url: url.value, chatId: chatId.value }),
     }),

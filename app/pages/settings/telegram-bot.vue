@@ -6,6 +6,9 @@ import { XIcon } from "lucide-vue-next";
 const storedChatId = useStorage("telegram-chat-id", "");
 const chatId = ref(storedChatId.value);
 const errorMessage = ref("");
+const {
+  public: { captionApiUrl },
+} = useRuntimeConfig();
 
 const clearChatId = () => {
   if (!chatId.value) return;
@@ -17,7 +20,7 @@ const clearChatId = () => {
 
 const { submit, isLoading } = useSubmit(
   () =>
-    $fetch("/api/telegram/validate", {
+    $fetch(`${captionApiUrl}/api/telegram/validate`, {
       method: "POST",
       body: JSON.stringify({ chatId: chatId.value }),
     }),
