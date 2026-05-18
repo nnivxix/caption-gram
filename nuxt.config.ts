@@ -99,7 +99,9 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    telegramBotToken: process.env.TELEGRAM_BOT_TOKEN || "",
+    public: {
+      captionApiUrl: process.env.CAPTION_API_URL || "",
+    },
   },
 
   shadcn: {
