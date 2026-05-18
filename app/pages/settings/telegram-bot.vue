@@ -18,7 +18,7 @@ const clearChatId = () => {
   errorMessage.value = "";
 };
 
-const { submit, isLoading } = useSubmit(
+const { submit, isLoading, succeeded } = useSubmit(
   () =>
     $fetch(`${captionApiUrl}/api/telegram/validate`, {
       method: "POST",
@@ -60,24 +60,28 @@ const { submit, isLoading } = useSubmit(
           :disabled="isLoading"
           required
         />
-        <XIcon
-          class="w-4 h-4 absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer"
-          @click="clearChatId"
-          :class="{
-            'text-muted-foreground/40': !chatId,
-          }"
-        />
+        <ClientOnly>
+          <XIcon
+            class="w-4 h-4 absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer"
+            @click="clearChatId"
+            :class="{
+              'text-muted-foreground/40': !chatId,
+            }"
+          />
+        </ClientOnly>
       </div>
-      <Button type="submit" :disabled="isLoading || !chatId">
-        {{ isLoading ? "Validating..." : "Validate and Save" }}
-      </Button>
+      <ClientOnly>
+        <Button type="submit" :disabled="isLoading || !chatId">
+          {{ isLoading ? "Validating..." : "Validate and Save" }}
+        </Button>
+      </ClientOnly>
     </form>
     <p class="text-sm text-muted-foreground">
       Your Chat ID will be saved locally in your browser and used to send
       captions to your Telegram account.
     </p>
-    <p v-if="storedChatId" class="text-sm text-green-600 mt-2">
-      ✓ Chat ID saved: {{ storedChatId }}
+    <p v-if="succeeded" class="text-sm text-green-600 mt-2">
+      ✓ Chat ID saved successfully!
     </p>
     <p v-if="errorMessage" class="text-sm text-red-600 mt-2">
       ✗ {{ errorMessage }}
