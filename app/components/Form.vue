@@ -13,6 +13,7 @@ type IgResponse = {
     caption: string;
     telegramSent: boolean;
   };
+  message: string;
 };
 
 const url = ref("");
@@ -33,7 +34,7 @@ const { submit, isLoading } = useSubmit(
     },
     onSuccess(data) {
       emit("update:content", data.data.caption);
-      toast.success("Captions fetched successfully!");
+      toast.success(data.message);
       url.value = "";
     },
   },
