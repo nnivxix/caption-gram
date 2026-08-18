@@ -24,8 +24,9 @@ const {
 
 const { submit, isLoading } = useSubmit(
   () =>
-    $fetch<IgResponse>(`${captionApiUrl}/api/ig`, {
+    $fetch<IgResponse>(`/api/ig`, {
       method: "POST",
+      baseURL: captionApiUrl,
       body: JSON.stringify({ url: url.value, chatId: chatId.value }),
     }),
   {
